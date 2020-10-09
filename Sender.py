@@ -83,7 +83,7 @@ def send_gbn(sock):
         data = ' '
         while data:
             data = file.read(PACKET_SIZE)  # makes the packets
-            packetStore.append(packet.make(packetStore, data)) # stores packets in packet list
+            packetStore.append(packet.make(packetStore, data))  # stores packets in packet list
             packetSeq += 1 # updates packet sequence counter
 
         base = 0
@@ -197,6 +197,7 @@ def receive_gbn(sock):
 
 # Main function
 if __name__ == '__main__':
+
     if len(sys.argv) != 2:
         print('Expected filename as command line argument')
         exit()
@@ -205,11 +206,19 @@ if __name__ == '__main__':
     sock.setblocking(0)
     sock.bind(SENDER_ADDR)
 
-    filename = sys.argv[1]
+    filename = sys.argv[2]
+    flag = sys.argv[1]
 
-    _thread.start_new_thread(send_snw, (sock,))
-    time.sleep(1)
-    _thread.start_new_thread(receive_snw, (sock, pkt_buffer))
+    if flag == 'gbn':
+        _thread.start_new_thread(send_gbn, (sock,))
+        time.sleep(1)
+        _thread.start_new_thread(receive_gbn, (sock, pkt_buffer))
+    if flag == 'snw':
+        _thread.start_new_thread(send_snw, (sock,))
+        time.sleep(1)
+        _thread.start_new_thread(receive_snw, (sock, pkt_buffer))
+    else:
+        print("Expected -gbn or -snw as command line argument")
 
     while alive:
         continue
